@@ -1,0 +1,2 @@
+建议直接上https，80端口默认关闭，需要开放的找到compose和nginx配置文件放开即可
+ssl证书文件位置见nginx配置

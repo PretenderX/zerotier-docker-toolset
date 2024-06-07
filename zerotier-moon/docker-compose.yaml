@@ -1,0 +1,15 @@
+services:
+    zerotier-moon:
+        container_name: zerotier-moon
+        ports:
+            - '[your public ip port]:9993/udp'
+        restart: unless-stopped
+        image: 'seedgou/zerotier-moon'
+        volumes:
+            - ./data:/var/lib/zerotier-one
+        entrypoint:
+            - /startup.sh
+            - "-4"
+            - [your public ip]
+            - "-p"
+            - "[your public ip port]"

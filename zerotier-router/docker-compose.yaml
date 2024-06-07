@@ -1,0 +1,15 @@
+services:
+    zerotier-router:
+        container_name: zerotier-router
+        ports:
+            - '9996:9996'
+            - '9996:9996/udp'
+        restart: unless-stopped
+        image: 'zerotier/zerotier:latest'
+        volumes:
+            - ./data:/var/lib/zerotier-one
+        cap_add:
+            - NET_ADMIN
+        devices:
+            - "/dev/net/tun"
+        command: [your network id]

@@ -1,0 +1,48 @@
+services:
+  zerotier:
+    image: dec0dos/zerotier-controller:latest
+    container_name: zu-controller
+    build:
+      context: .
+      dockerfile: ./docker/zerotier/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - zerotier_one:/var/lib/zerotier-one
+    expose:
+      - "9993/tcp"
+    ports:
+      - "9993:9993"
+      - "9993:9993/udp"
+  zero-ui:
+    image: dec0dos/zero-ui:latest
+    container_name: zu-main
+    build:
+      context: .
+      dockerfile: ./docker/zero-ui/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - zerotier
+    volumes:
+      - zerotier_one:/var/lib/zerotier-one
+      - ./zero_ui:/app/backend/data
+    environment:
+      - ZU_CONTROLLER_ENDPOINT=http://zerotier:9993/
+      - ZU_SECURE_HEADERS=true
+      - ZU_DEFAULT_USERNAME=[your admin name]
+      - ZU_DEFAULT_PASSWORD=[your admin password]
+    expose:
+      - "4000"
+  https-proxy:
+    image: nginx:alpine
+    container_name: zu-https-proxy
+    restart: unless-stopped
+    depends_on:
+      - zero-ui
+    volumes:
+      - ./nginx_conf:/etc/nginx/conf.d
+    ports:
+      - "443:443"
+      #- "80:80"
+
+volumes:
+  zerotier_one:
